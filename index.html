@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-do</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body >
+    <div class="container mx-auto  px-4 py-8 max-w-sm max-w-md max-w-lg max-w-xl max-w-2xl ">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-grey-400 mb-2 flex items-center justify-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                My Tasks
+            </h1>
+            <p id="date" class="text-gray-600"></p>
+        </header>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 max ">
+            <div class="flex mb-4 ">
+                <input type="text" id="input" placeholder="What do you need to do?" class="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+                <button id="add-task" class="bg-gray-500 hover:gray-600 text-white px-4 py-2 rounded-r-lg " onclick="added()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="bg-gray-300 h-100 rounded-lg shadow-md p-6" id="task">
+            <ul id="todos" class="space-y-2">
+
+            </ul>
+        </div>
+    </div>
+<script>
+    document.getElementById('date').innerHTML= new Date().toDateString();
+
+
+    function added() {
+    let input = document.getElementById('input');
+    let d1 = input.value;
+    let li = document.createElement('li');
+    li.classList.add("flex","items-center","gap-2");
+
+    let ul = document.getElementById('todos');
+    ul.appendChild(li);
+    
+    if(input.value === ""){
+        return;
+    }
+
+    input.value="";
+    
+
+
+    let checkbox = document.createElement('input');
+    li.appendChild(checkbox);
+    checkbox.type = 'checkbox'; 
+    li.checkbox.add("checkbox")
+    
+    checkbox.addEventListener('change',function()
+    {
+        if (checkbox.checked){
+            li.classList.add("line-through");
+        }else{
+            li.classList.remove("line-through");
+        }
+
+        
+    });
+
+    let div = document.createElement('div');
+    li.appendChild(div);
+    div.innerHTML=d1;
+    
+
+   
+
+  
+    
+    }
+    
+    
+
+
+</script>
+
+</body>
+</html>
