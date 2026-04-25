@@ -40,12 +40,18 @@
     </div>
     <script>
 
+        
+
         renderTask();
         function renderTask() {
             let ul = document.getElementById('todos');
             ul.innerHTML = "";
 
+
+
             let todos = JSON.parse(localStorage.getItem("todos")) || [];
+
+
             todos.forEach((task, index) => {
                 let li = document.createElement('li');
             li.classList.add("flex", "items-center", "gap-2");
@@ -57,7 +63,6 @@
 
                 let checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
-                localStorage.setItem("todos", JSON.stringify(todos));
                 li.appendChild(checkbox);
 
                 let btndel = document.createElement("button");
@@ -68,14 +73,17 @@
 
 
                 checkbox.addEventListener('change', function () {
+
+                    
                     if (checkbox.checked) {
                         li.classList.add("line-through");
                     }else{
                         li.classList.remove("line-through");
                     }
-                    
-
+                    checkbox.checked=task.done;
+                    localStorage.setItem("todos",JSON.stringify(todos));
                 });
+                
 
                 li.appendChild(btndel);
 
@@ -89,6 +97,9 @@
                 li.appendChild(edit);
 
                 edit.addEventListener('click', function () {
+                    edit.style.display = "none";
+                    btndel.style.display = "none";
+                    checkbox.style.display = "none";
                     let input = document.createElement('input');
                     li.appendChild(input);
                     input.classList.add("flex-grow", "bg-white");
@@ -97,6 +108,10 @@
 
                     input.addEventListener('keydown', function (event) {
                         if (event.key === "Enter") {
+
+                            edit.style.display = "";
+                            btndel.style.display = "";
+                            checkbox.style.display = "";
                             let newdiv = document.createElement('div');
                             newdiv.innerText = input.value;
 
