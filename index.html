@@ -39,87 +39,102 @@
         </div>
     </div>
     <script>
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
+        renderTask();
+        function renderTask() {
+            let ul = document.getElementById('todos');
+            ul.innerHTML = "";
+
+            let todos = JSON.parse(localStorage.getItem("todos")) || [];
+            todos.forEach((task, index) => {
+                let li = document.createElement('li');
+            li.classList.add("flex", "items-center", "gap-2");
+                ul.appendChild(li);
+
+                let div = document.createElement('div');
+                div.innerText = task;
+                li.appendChild(div);
+
+                let checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                localStorage.setItem("todos", JSON.stringify(todos));
+                li.appendChild(checkbox);
+
+                let btndel = document.createElement("button");
+                btndel.innerHTML = "<i class='fa fa-trash'></i>";
+
+                let edit = document.createElement('button');
+                edit.innerHTML = "<i class='fas fa-pen'></i>";
+
+
+                checkbox.addEventListener('change', function () {
+                    if (checkbox.checked) {
+                        li.classList.add("line-through");
+                    }else{
+                        li.classList.remove("line-through");
+                    }
+                    
+
+                });
+
+                li.appendChild(btndel);
+
+                btndel.addEventListener('click', function () {
+                    todos.splice(index,1);
+                    li.remove();
+                    localStorage.setItem("todos", JSON.stringify(todos));
+                    renderTask();
+                });
+
+                li.appendChild(edit);
+
+                edit.addEventListener('click', function () {
+                    let input = document.createElement('input');
+                    li.appendChild(input);
+                    input.classList.add("flex-grow", "bg-white");
+                    li.replaceChild(input, div);
+
+
+                    input.addEventListener('keydown', function (event) {
+                        if (event.key === "Enter") {
+                            let newdiv = document.createElement('div');
+                            newdiv.innerText = input.value;
+
+                            
+
+
+                            todos[index] = input.value;
+                            localStorage.setItem("todos", JSON.stringify(todos));
+
+                            li.replaceChild(newdiv, input);
+                            div = newdiv;
+                        }
+                    });
+                });
+
+            });
+        }
         function added() {
+
             let input = document.getElementById('input');
             let d1 = input.value;
 
-            
+            if (d1 === "") return;
 
-            let li = document.createElement('li');
-            li.classList.add("flex", "items-center", "gap-2");
+            let todos = JSON.parse(localStorage.getItem("todos")) || [];
 
-            let ul = document.getElementById('todos');
-            ul.appendChild(li);
+            todos.push(d1);
 
-            if (input.value === "") {
-                return;
-            }
-
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem("todos", JSON.stringify(todos));
 
             input.value = "";
 
-
-
-            let checkbox = document.createElement('input');
-            li.appendChild(checkbox);
-            checkbox.type = 'checkbox';
-
-
-            checkbox.addEventListener('change', function () {
-                if (checkbox.checked) {
-                    li.classList.add("line-through");
-                } else {
-                    li.classList.remove("line-through");
-                }
-
-
-            });
-
-            let div = document.createElement('div');
-            li.appendChild(div);
-            div.innerHTML = d1;
-
-            let btndel = document.createElement('button');
-            btndel.innerHTML = "<i class='fa fa-trash'></i>";
-            li.appendChild(btndel);
-
-            btndel.addEventListener('click', function () {
-                li.remove();
-            });
-          
-
-            let edit = document.createElement('button');
-            edit.innerHTML = "<i class='fas fa-pen'></i>";
-            li.appendChild(edit);
-
-            edit.addEventListener('click', function () {
-                let input = document.createElement('input');
-                li.appendChild(input);
-                input.classList.add("flex-grow", "bg-white");
-                li.replaceChild(input, div);
-                
-
-                input.addEventListener('keydown', function (event) {
-                    if (event.key === "Enter") {
-                        let newdiv = document.createElement('div');
-                        newdiv.innerText = input.value;
-                        li.replaceChild(newdiv, input);
-                        div = newdiv;
-                    }
-                });
-            });
-
+            renderTask();
 
 
 
         }
-        
-        
-
-
     </script>
+</body>
 
 </html>
