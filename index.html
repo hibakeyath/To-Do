@@ -32,7 +32,8 @@
             </div>
         </div>
 
-        <div class="bg-gray-300 h-100 rounded-lg shadow-md p-6" id="task">
+        <div class="bg-GRAY-300 rounded-lg shadow-md p-6" id="task">
+            
             <ul id="todos" class="space-y-2">
 
             </ul>
@@ -40,7 +41,7 @@
     </div>
     <script>
 
-        
+
 
         renderTask();
         function renderTask() {
@@ -48,86 +49,93 @@
             ul.innerHTML = "";
 
 
-
-            let todos = JSON.parse(localStorage.getItem("todos")) || [];
-
-
-            todos.forEach((task, index) => {
-                let li = document.createElement('li');
-            li.classList.add("flex", "items-center", "gap-2");
-                ul.appendChild(li);
-
-                let div = document.createElement('div');
-                div.innerText = task;
-                li.appendChild(div);
-
-                let checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                li.appendChild(checkbox);
-
-                let btndel = document.createElement("button");
-                btndel.innerHTML = "<i class='fa fa-trash'></i>";
-
-                let edit = document.createElement('button');
-                edit.innerHTML = "<i class='fas fa-pen'></i>";
+            fetch('https://dummyjson.com/todos')
+                .then(res => res.json())
+                .then(data => {
+                    let todos = data.todos;
 
 
-                checkbox.addEventListener('change', function () {
+                    todos.forEach((task, index) => {
+                        let li = document.createElement('li');
+                        li.classList.add("flex", "items-center", "gap-2");
+                        ul.appendChild(li);
 
-                    
-                    if (checkbox.checked) {
-                        li.classList.add("line-through");
-                    }else{
-                        li.classList.remove("line-through");
-                    }
-                    checkbox.checked=task.done;
-                    localStorage.setItem("todos",JSON.stringify(todos));
-                });
-                
+                        let div = document.createElement('div');
+                        div.innerText = task.todo;
+                        li.appendChild(div);
 
-                li.appendChild(btndel);
+                        let checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        li.appendChild(checkbox);
 
-                btndel.addEventListener('click', function () {
-                    todos.splice(index,1);
-                    li.remove();
-                    localStorage.setItem("todos", JSON.stringify(todos));
-                    renderTask();
-                });
+                        let btndel = document.createElement("button");
+                        btndel.innerHTML = "<i class='fa fa-trash'></i>";
 
-                li.appendChild(edit);
-
-                edit.addEventListener('click', function () {
-                    edit.style.display = "none";
-                    btndel.style.display = "none";
-                    checkbox.style.display = "none";
-                    let input = document.createElement('input');
-                    li.appendChild(input);
-                    input.classList.add("flex-grow", "bg-white");
-                    li.replaceChild(input, div);
+                        let edit = document.createElement('button');
+                        edit.innerHTML = "<i class='fas fa-pen'></i>";
 
 
-                    input.addEventListener('keydown', function (event) {
-                        if (event.key === "Enter") {
-
-                            edit.style.display = "";
-                            btndel.style.display = "";
-                            checkbox.style.display = "";
-                            let newdiv = document.createElement('div');
-                            newdiv.innerText = input.value;
-
-                            
+                        checkbox.addEventListener('change', function () {
 
 
-                            todos[index] = input.value;
+                            if (checkbox.checked) {
+                                li.classList.add("line-through");
+                            } else {
+                                li.classList.remove("line-through");
+                            }
+                        });
+
+
+                        li.appendChild(btndel);
+
+                        btndel.addEventListener('click', function () {
+                            fetch(`https://dummyjson.com/todos/${task.id}`, {
+                            method: 'DELETE'
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log(data); 
+                            });
+                            li.remove();
                             localStorage.setItem("todos", JSON.stringify(todos));
+                            renderTask();
+                        });
 
-                            li.replaceChild(newdiv, input);
-                            div = newdiv;
-                        }
+                        li.appendChild(edit);
+
+                        edit.addEventListener('click', function () {
+                            edit.style.display = "none";
+                            btndel.style.display = "none";
+                            checkbox.style.display = "none";
+                            let input = document.createElement('input');
+                            li.appendChild(input);
+                            input.classList.add("flex-grow", "bg-white");
+                            li.replaceChild(input, div);
+
+
+                            input.addEventListener('keydown', function (event) {
+                                if (event.key === "Enter") {
+
+                                    edit.style.display = "";
+                                    btndel.style.display = "";
+                                    checkbox.style.display = "";
+                                    let newdiv = document.createElement('div');
+                                    newdiv.innerText = input.value;
+
+
+
+
+                                    todos[index] = input.value;
+                                    localStorage.setItem("todos", JSON.stringify(todos));
+
+                                    li.replaceChild(newdiv, input);
+                                    div = newdiv;
+                                }
+                            });
+                        });
+
                     });
                 });
-
-            });
         }
         function added() {
 
@@ -138,9 +146,21 @@
 
             let todos = JSON.parse(localStorage.getItem("todos")) || [];
 
-            todos.push(d1);
-
-            localStorage.setItem("todos", JSON.stringify(todos));
+            fetch('https://dummyjson.com/todos/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                todo: d1,
+                completed: false,
+                userId: 1
+            })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+            });
 
             input.value = "";
 
