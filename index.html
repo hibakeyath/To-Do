@@ -33,7 +33,7 @@
         </div>
 
         <div class="bg-gray-300 rounded-lg shadow-md p-6" id="task">
-            
+
             <ul id="todos" class="space-y-2">
 
             </ul>
@@ -44,6 +44,27 @@
 
 
         renderTask();
+
+        function deleteTodo() {
+            fetch(`https://dummyjson.com/todos/${task.id}`, {
+                method: 'DELETE'
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    todos.splice(index, 1);
+                    li.remove();
+                })
+        }
+
+        function toggleTodoStatus() {
+            if (checkbox.checked) {
+                li.classList.add("line-through");
+            } else {
+                li.classList.remove("line-through");
+            }
+        }
+
         function renderTask() {
             let ul = document.getElementById('todos');
             ul.innerHTML = "";
@@ -75,31 +96,11 @@
                         edit.innerHTML = "<i class='fas fa-pen'></i>";
 
 
-                        checkbox.addEventListener('change', function () {
-
-
-                            if (checkbox.checked) {
-                                li.classList.add("line-through");
-                            } else {
-                                li.classList.remove("line-through");
-                            }
-                        });
-
+                        checkbox.addEventListener('change', toggleTodoStatus);
 
                         li.appendChild(btndel);
 
-                        btndel.addEventListener('click', function () {
-                            fetch(`https://dummyjson.com/todos/${task.id}`, {
-                            method: 'DELETE'
-                            })
-                            .then(res => res.json())
-                            .then(data => {
-                                console.log(data); 
-                            });
-                            li.remove();
-                            localStorage.setItem("todos", JSON.stringify(todos));
-                            renderTask();
-                        });
+                        btndel.addEventListener('click', deleteTodo);
 
                         li.appendChild(edit);
 
@@ -137,6 +138,7 @@
                     });
                 });
         }
+        
         function added() {
 
             let input = document.getElementById('input');
@@ -147,20 +149,20 @@
             let todos = JSON.parse(localStorage.getItem("todos")) || [];
 
             fetch('https://dummyjson.com/todos/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                todo: d1,
-                completed: false,
-                userId: 1
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    todo: d1,
+                    completed: false,
+                    userId: 1
+                })
             })
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data);
-            });
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                });
 
             input.value = "";
 
